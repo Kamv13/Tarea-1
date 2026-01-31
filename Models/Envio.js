@@ -30,16 +30,21 @@ export class Envio {
     let extraDias = diferencia > 0 ? Math.floor(diferencia / 100) : 0;
     let diasTotales = diasBase + extraDias;
     fechaEntrega.setDate(fechaEntrega.getDate() + diasTotales);
-    return fechaEntrega.toISOString().split("T")[0];
-  }
 
+    return {
+      fecha: fechaEntrega.toISOString().split("T")[0],
+      extraDias: extraDias
+    };
+  }
   calcularTotalEnvio() {
     const recargoPeso = this.calcularRecargoPeso();
     const recargoDistancia = this.calcularRecargoDistancia();
     const subtotal = this.costoBase + recargoPeso + recargoDistancia;
-    const extraPorDia = Math.floor((subtotal - this.costoBase) / 100);
-    const total = subtotal + extraPorDia;
-    const fechaEntrega = this.calcularFechaEstimadaEntrega();
+
+    const extraPorMonto = Math.floor((subtotal - this.costoBase) / 100);
+    const total = subtotal + extraPorMonto;
+
+    const { fecha, extraDias } = this.calcularFechaEstimadaEntrega();
 
     CG({
       columns: ["Concepto", "Valor"],
@@ -47,9 +52,9 @@ export class Envio {
         ["Costo base", `L${this.costoBase.toFixed(2)}`],
         ["Recargo por peso", `L${recargoPeso.toFixed(2)}`],
         ["Recargo por distancia", `L${recargoDistancia.toFixed(2)}`],
-        ["Dias extra por distancia (+1 cada 100km)", `${extraPorDia.toFixed(2)}`],
+        ["Días extra por distancia (+1 cada 100km) " , `"+"${+extraDias} dias"`],
         ["Costo total", `L${total.toFixed(2)}`],
-        ["Fecha estimada de entrega", fechaEntrega]
+        ["Fecha estimada de entrega", fecha]
       ]
     });
   }
