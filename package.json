@@ -1,0 +1,8 @@
+{
+  "name": "envio-app",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "console-grid": "^2.2.3"
+  }
+}
